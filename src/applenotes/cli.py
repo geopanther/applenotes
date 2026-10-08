@@ -1,10 +1,12 @@
 """Command-line interface. Offline diagnostics never require credentials."""
 
 import argparse
+import getpass
 import sys
+import warnings
 from pathlib import Path
 
-from pydantic import ValidationError
+from pydantic import SecretStr, ValidationError
 from pydantic_settings import SettingsError
 
 from applenotes import __version__
@@ -53,6 +55,17 @@ def discover(root: Path) -> Path:
     return root
 
 
+def prompt_password() -> SecretStr:
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", getpass.GetPassWarning)
+            return SecretStr(getpass.getpass("IMAP password: "))
+    except (EOFError, KeyboardInterrupt, getpass.GetPassWarning) as error:
+        raise ValueError(
+            "Unable to read IMAP password interactively; set APPLENOTES_IMAP_PASSWORD."
+        ) from error
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     transport = None
@@ -93,12 +106,21 @@ def main(argv: list[str] | None = None) -> int:
             values["_env_file"] = args.env_file
         try:
             settings = Settings(**values)
+            if settings.imap_server and settings.imap_username and settings.imap_password is None:
+                settings.imap_password = prompt_password()
             settings.require_network()
-        except ValidationError, ValueError, SettingsError:
-            print(
-                "Invalid configuration; check APPLENOTES_ settings and merge-command JSON.",
-                file=sys.stderr,
-            )
+        except ValidationError as error:
+            print("Invalid configuration:", file=sys.stderr)
+            for detail in error.errors(
+                include_input=False, include_context=False, include_url=False
+            ):
+                field, *path = detail["loc"]
+                setting = f"APPLENOTES_{str(field).upper()}"
+                setting += "".join(f"[{part}]" for part in path)
+                print(f"  {setting}: {detail['msg']}", file=sys.stderr)
+            return 2
+        except (ValueError, SettingsError) as error:
+            print(f"Invalid configuration: {error}", file=sys.stderr)
             return 2
         transport = IMAPTransport.connect(settings)
         engine = SyncEngine(store, transport, settings)

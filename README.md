@@ -12,11 +12,14 @@ applenotes --help
 Set connection settings in your environment or an optional `.env` in the current
 working directory. Explicit command-line settings take precedence over environment
 variables, which take precedence over `.env`. Passwords have no CLI argument.
+If `APPLENOTES_IMAP_PASSWORD` is unset, network commands prompt for it with input
+hidden. The entered password is used only for that invocation and is never saved.
+Set the variable for unattended commands. An explicitly empty password is invalid.
 
 ```bash
 export APPLENOTES_IMAP_SERVER=imap.example.org
 export APPLENOTES_IMAP_USERNAME=you@example.org
-export APPLENOTES_IMAP_PASSWORD=your-app-password
+# Optionally set APPLENOTES_IMAP_PASSWORD to skip the password prompt.
 mkdir notes
 cd notes
 applenotes init
@@ -61,16 +64,17 @@ trailing spaces remain. LF line endings and final-newline differences are preser
 Set `APPLENOTES_INDENT_SPACES` or `--indent-spaces` to change the width before
 initializing a workspace; changing it later can appear as content edits.
 
-| Setting (`APPLENOTES_` prefix)                  | Default                                              |
-| ----------------------------------------------- | ---------------------------------------------------- |
-| `IMAP_SERVER`, `IMAP_USERNAME`, `IMAP_PASSWORD` | Required for network commands                        |
-| `IMAP_FOLDER`                                   | `Notes`                                              |
-| `IMAP_SECURITY`                                 | `tls`; alternatively `starttls` (required, verified) |
-| `IMAP_PORT`                                     | 993 for TLS; 143 for STARTTLS                        |
-| `TIMEOUT_SECONDS`                               | 30                                                   |
-| `INDENT_SPACES`                                 | 4                                                    |
-| `MERGE_TIMEOUT_SECONDS`                         | 30                                                   |
-| `MERGE_COMMAND`                                 | JSON argv shown below                                |
+| Setting (`APPLENOTES_` prefix) | Default                                              |
+| ------------------------------ | ---------------------------------------------------- |
+| `IMAP_SERVER`, `IMAP_USERNAME` | Required for network commands                        |
+| `IMAP_PASSWORD`                | Prompted if unset                                    |
+| `IMAP_FOLDER`                  | `Notes`                                              |
+| `IMAP_SECURITY`                | `tls`; alternatively `starttls` (required, verified) |
+| `IMAP_PORT`                    | 993 for TLS; 143 for STARTTLS                        |
+| `TIMEOUT_SECONDS`              | 30                                                   |
+| `INDENT_SPACES`                | 4                                                    |
+| `MERGE_TIMEOUT_SECONDS`        | 30                                                   |
+| `MERGE_COMMAND`                | JSON argv shown below                                |
 
 The default merge command works outside a Git repository:
 
