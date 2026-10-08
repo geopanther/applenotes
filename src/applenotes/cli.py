@@ -94,11 +94,18 @@ def main(argv: list[str] | None = None) -> int:
         try:
             settings = Settings(**values)
             settings.require_network()
-        except ValidationError, ValueError, SettingsError:
-            print(
-                "Invalid configuration; check APPLENOTES_ settings and merge-command JSON.",
-                file=sys.stderr,
-            )
+        except ValidationError as error:
+            print("Invalid configuration:", file=sys.stderr)
+            for detail in error.errors(
+                include_input=False, include_context=False, include_url=False
+            ):
+                field, *path = detail["loc"]
+                setting = f"APPLENOTES_{str(field).upper()}"
+                setting += "".join(f"[{part}]" for part in path)
+                print(f"  {setting}: {detail['msg']}", file=sys.stderr)
+            return 2
+        except (ValueError, SettingsError) as error:
+            print(f"Invalid configuration: {error}", file=sys.stderr)
             return 2
         transport = IMAPTransport.connect(settings)
         engine = SyncEngine(store, transport, settings)

@@ -5,6 +5,11 @@ changes under Unreleased until a final release is prepared.
 
 ## Unreleased
 
+### Fixed
+
+- Configuration errors name missing or invalid settings and explain validation
+  failures without printing credential values.
+
 ### Added
 
 - IMAP synchronization with plain-text MIME uploads and canonical HTML import.

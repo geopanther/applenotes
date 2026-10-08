@@ -2,10 +2,10 @@
 
 import json
 from string import Formatter
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import Field, SecretStr, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 from applenotes.models import Identity
 
@@ -48,7 +48,9 @@ class Settings(BaseSettings):
     imap_security: Literal["tls", "starttls"] = "tls"
     timeout_seconds: float = Field(default=30, gt=0)
     indent_spaces: int = Field(default=4, ge=1, le=32)
-    merge_command: list[str] = Field(default_factory=lambda: DEFAULT_MERGE_COMMAND.copy())
+    merge_command: Annotated[list[str], NoDecode] = Field(
+        default_factory=lambda: DEFAULT_MERGE_COMMAND.copy()
+    )
     merge_timeout_seconds: float = Field(default=30, gt=0)
 
     def __init__(self, **values):
@@ -59,7 +61,12 @@ class Settings(BaseSettings):
     @field_validator("merge_command", mode="before")
     @classmethod
     def parse_command(cls, value: object) -> object:
-        return json.loads(value) if isinstance(value, str) else value
+        if isinstance(value, str):
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError as error:
+                raise ValueError(f"Invalid JSON: {error.msg}") from error
+        return value
 
     @field_validator("merge_command")
     @classmethod
@@ -74,8 +81,13 @@ class Settings(BaseSettings):
         return value
 
     def require_network(self) -> None:
-        if not self.imap_server or not self.imap_username or not self.imap_password:
-            raise ValueError("IMAP server, username, and password are required")
+        missing = [
+            f"APPLENOTES_{field.upper()}"
+            for field in ("imap_server", "imap_username", "imap_password")
+            if not getattr(self, field)
+        ]
+        if missing:
+            raise ValueError(f"Missing required settings: {', '.join(missing)}")
 
     def identity(self) -> Identity:
         self.require_network()

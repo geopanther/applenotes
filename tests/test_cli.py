@@ -27,10 +27,78 @@ def test_offline_status_and_discovery(tmp_path, capsys):
 
 def test_invalid_and_secret_free_errors(tmp_path, monkeypatch, capsys):
     assert main(["sync"]) == 2
+    error = capsys.readouterr().err
+    for setting in ["IMAP_SERVER", "IMAP_USERNAME", "IMAP_PASSWORD"]:
+        assert f"APPLENOTES_{setting}" in error
+    assert "required" in error
     monkeypatch.setenv("APPLENOTES_IMAP_PASSWORD", "DO-NOT-PRINT")
     monkeypatch.setenv("APPLENOTES_INDENT_SPACES", "invalid")
     assert main(["sync"]) == 2
-    assert "DO-NOT-PRINT" not in capsys.readouterr().err
+    error = capsys.readouterr().err
+    assert "APPLENOTES_INDENT_SPACES" in error
+    assert "valid integer" in error
+    assert "DO-NOT-PRINT" not in error
+
+
+def test_missing_password_is_specific(monkeypatch, capsys):
+    monkeypatch.setenv("APPLENOTES_IMAP_SERVER", "test")
+    monkeypatch.setenv("APPLENOTES_IMAP_USERNAME", "user")
+    assert main(["init"]) == 2
+    error = capsys.readouterr().err
+    assert "APPLENOTES_IMAP_PASSWORD" in error
+    assert "APPLENOTES_IMAP_SERVER" not in error
+    assert "APPLENOTES_IMAP_USERNAME" not in error
+
+
+def test_multiple_invalid_settings(monkeypatch, capsys):
+    monkeypatch.setenv("APPLENOTES_INDENT_SPACES", "0")
+    monkeypatch.setenv("APPLENOTES_IMAP_PORT", "65536")
+    assert main(["init"]) == 2
+    error = capsys.readouterr().err
+    assert "APPLENOTES_INDENT_SPACES" in error
+    assert "greater than or equal to 1" in error
+    assert "APPLENOTES_IMAP_PORT" in error
+    assert "less than or equal to 65535" in error
+
+
+@pytest.mark.parametrize("source", ["environment", "dotenv", "cli"])
+@pytest.mark.parametrize(
+    ("value", "reason"),
+    [
+        ("DO-NOT-PRINT", "Invalid JSON"),
+        ('["DO-NOT-PRINT", "{local}"]', "local, base, and remote placeholders"),
+        ('["tool", "{local}", "{base}", "{remote}", 123]', "valid string"),
+    ],
+)
+def test_invalid_merge_command(source, value, reason, tmp_path, monkeypatch, capsys):
+    args = ["init"]
+    if source == "environment":
+        monkeypatch.setenv("APPLENOTES_MERGE_COMMAND", value)
+    elif source == "dotenv":
+        dotenv = tmp_path / "custom.env"
+        dotenv.write_text(f"APPLENOTES_MERGE_COMMAND='{value}'\n")
+        args = ["--env-file", str(dotenv), *args]
+    else:
+        args = ["--merge-command", value, *args]
+    assert main(args) == 2
+    error = capsys.readouterr().err
+    assert "APPLENOTES_MERGE_COMMAND" in error
+    assert reason in error
+    assert "DO-NOT-PRINT" not in error
+
+
+def test_invalid_password_value_is_not_printed(monkeypatch, capsys):
+    from applenotes.settings import Settings
+
+    class InvalidSettings(Settings):
+        def __init__(self, **values):
+            super().__init__(imap_password={"secret": "DO-NOT-PRINT"}, _env_file=None)
+
+    monkeypatch.setattr("applenotes.cli.Settings", InvalidSettings)
+    assert main(["init"]) == 2
+    error = capsys.readouterr().err
+    assert "APPLENOTES_IMAP_PASSWORD" in error
+    assert "DO-NOT-PRINT" not in error
 
 
 def test_network_commands(tmp_path, monkeypatch, capsys):
