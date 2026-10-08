@@ -1,0 +1,9 @@
+Subject: Synthetic Apple note
+Message-ID: <synthetic-html@example.invalid>
+X-Uniform-Type-Identifier: com.apple.mail-note
+X-Universally-Unique-Identifier: synthetic-apple-uuid
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<div>Synthetic title</div><div>&nbsp;&nbsp;&nbsp;&nbsp;Indented</div><div><br></div><div>Final &amp; &lt; text</div>

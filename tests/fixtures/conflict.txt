@@ -1,0 +1,7 @@
+<<<<<<< local
+Local
+||||||| base
+Base
+=======
+Remote
+>>>>>>> remote

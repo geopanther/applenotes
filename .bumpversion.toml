@@ -1,0 +1,29 @@
+[tool.bumpversion]
+current_version = "0.1.0"
+parse = """(?x)
+    (?P<major>0|[1-9]\\d*)\\.
+    (?P<minor>0|[1-9]\\d*)\\.
+    (?P<patch>0|[1-9]\\d*)
+    (?:-(?P<pre_l>rc)(?P<pre_n>[1-9]\\d*))?
+"""
+serialize = ["{major}.{minor}.{patch}-{pre_l}{pre_n}", "{major}.{minor}.{patch}"]
+tag = false
+commit = false
+allow_dirty = false
+
+[tool.bumpversion.parts.pre_l]
+values = ["rc", "final"]
+optional_value = "final"
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+
+[[tool.bumpversion.files]]
+filename = "src/applenotes/__init__.py"
+
+[[tool.bumpversion.files]]
+filename = "CHANGELOG.md"
+search = "## Unreleased"
+replace = """## Unreleased
+
+## [{new_version}] - {now:%Y-%m-%d}"""

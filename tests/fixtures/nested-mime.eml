@@ -1,0 +1,27 @@
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="outer"
+
+--outer
+Content-Type: multipart/alternative; boundary="inner"
+
+--inner
+Content-Type: text/plain; charset=utf-8
+
+Ignore this alternative.
+--inner
+Content-Type: text/html; charset=utf-8
+
+<p>Title</p><p>Body</p>
+--inner--
+--outer
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: attachment; filename="private.txt"
+
+Do not import this attachment.
+--outer
+Content-Type: image/png
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="x.png"
+
+aW1hZ2U=
+--outer--

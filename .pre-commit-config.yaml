@@ -1,0 +1,64 @@
+default_stages: [pre-commit, pre-push]
+default_install_hook_types: [commit-msg, pre-commit, pre-push]
+exclude: ^(tests/fixtures/|plan\.md$|plan-prompt\.txt$|\.env|\.vscode/)
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: check-json
+      - id: pretty-format-json
+        args: [--autofix]
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-merge-conflict
+      - id: name-tests-test
+        args: [--pytest-test-first]
+        exclude: ^tests/(conftest|mock_server|loopback|__init__)\.py$
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.11
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        additional_dependencies: [prettier@3.6.2]
+        files: \.(json|md|yaml|yml)$
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.9.4
+    hooks:
+      - id: bandit
+        pass_filenames: false
+        args: [-r, src/applenotes, -s, B101]
+  - repo: local
+    hooks:
+      - id: osv-scanner
+        name: osv-scanner
+        entry: osv-scanner scan source --lockfile=uv.lock --verbosity=error
+        language: system
+        always_run: true
+        pass_filenames: false
+      - id: gitlint
+        name: gitlint (locked patched dependencies)
+        entry: uv run --locked --group dev gitlint --staged --msg-filename
+        language: system
+        stages: [commit-msg]
+      - id: ty
+        name: ty
+        entry: uv run --locked --group dev ty check src/applenotes
+        language: system
+        types: [python]
+        pass_filenames: false
+      - id: tox
+        name: Python 3.14 tests and branch coverage
+        entry: uv run --locked --group dev tox -e py314
+        language: system
+        always_run: true
+        pass_filenames: false
+        stages: [pre-push]
