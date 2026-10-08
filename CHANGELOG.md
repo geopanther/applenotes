@@ -12,6 +12,8 @@ changes under Unreleased until a final release is prepared.
 
 ### Added
 
+- Hidden interactive password prompt for network commands when
+  `APPLENOTES_IMAP_PASSWORD` is unset.
 - IMAP synchronization with plain-text MIME uploads and canonical HTML import.
 - Configurable three-way merges, conflict copies, identity linking, deletions,
   and checkpointed recovery in a human-readable state file.

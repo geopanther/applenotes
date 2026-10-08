@@ -1,4 +1,6 @@
+import getpass
 import json
+import warnings
 
 import pytest
 
@@ -25,6 +27,15 @@ def test_offline_status_and_discovery(tmp_path, capsys):
     assert main(["--workspace", str(nested), "status"]) == 0
 
 
+@pytest.fixture
+def no_password_prompt(monkeypatch):
+    def fail(prompt):
+        pytest.fail("Unexpected password prompt")
+
+    monkeypatch.setattr("applenotes.cli.getpass.getpass", fail)
+
+
+@pytest.mark.usefixtures("no_password_prompt")
 def test_invalid_and_secret_free_errors(tmp_path, monkeypatch, capsys):
     assert main(["sync"]) == 2
     error = capsys.readouterr().err
@@ -40,9 +51,10 @@ def test_invalid_and_secret_free_errors(tmp_path, monkeypatch, capsys):
     assert "DO-NOT-PRINT" not in error
 
 
-def test_missing_password_is_specific(monkeypatch, capsys):
+def test_empty_prompted_password_is_specific(monkeypatch, capsys):
     monkeypatch.setenv("APPLENOTES_IMAP_SERVER", "test")
     monkeypatch.setenv("APPLENOTES_IMAP_USERNAME", "user")
+    monkeypatch.setattr("applenotes.cli.getpass.getpass", lambda prompt: "")
     assert main(["init"]) == 2
     error = capsys.readouterr().err
     assert "APPLENOTES_IMAP_PASSWORD" in error
@@ -50,6 +62,69 @@ def test_missing_password_is_specific(monkeypatch, capsys):
     assert "APPLENOTES_IMAP_USERNAME" not in error
 
 
+def test_network_commands_prompt_for_missing_password(tmp_path, monkeypatch, capsys):
+    server = MockServer()
+    prompts = []
+    monkeypatch.setenv("APPLENOTES_IMAP_SERVER", "test")
+    monkeypatch.setenv("APPLENOTES_IMAP_USERNAME", "user")
+
+    def prompt_password(prompt):
+        prompts.append(prompt)
+        return "PROMPTED-SECRET"
+
+    def connect(settings):
+        assert settings.imap_password.get_secret_value() == "PROMPTED-SECRET"
+        assert "PROMPTED-SECRET" not in repr(settings)
+        assert "PROMPTED-SECRET" not in settings.model_dump_json()
+        return server.client()
+
+    monkeypatch.setattr("applenotes.cli.getpass.getpass", prompt_password)
+    monkeypatch.setattr("applenotes.cli.IMAPTransport.connect", connect)
+    commands = [
+        (["init"], 0),
+        (["pull"], 0),
+        (["push"], 0),
+        (["sync", "--dry-run"], 0),
+        (["resolve", "missing.txt"], 2),
+        (["link", "missing.txt", "--remote-uid", "999"], 2),
+    ]
+    for args, exit_code in commands:
+        assert main(args) == exit_code
+    assert prompts == ["IMAP password: "] * len(commands)
+    assert main(["status"]) == 0
+    assert len(prompts) == len(commands)
+    assert not (tmp_path / ".env").exists()
+    assert "PROMPTED-SECRET" not in (tmp_path / ".applenotes" / "state.json").read_text()
+    output = capsys.readouterr()
+    assert "PROMPTED-SECRET" not in output.out + output.err
+
+
+@pytest.mark.parametrize("failure", [EOFError, KeyboardInterrupt, getpass.GetPassWarning])
+def test_unavailable_password_prompt(failure, monkeypatch, capsys):
+    monkeypatch.setenv("APPLENOTES_IMAP_SERVER", "test")
+    monkeypatch.setenv("APPLENOTES_IMAP_USERNAME", "user")
+
+    def fail(prompt):
+        if failure is getpass.GetPassWarning:
+            warnings.warn("Cannot hide input", getpass.GetPassWarning, stacklevel=2)
+            pytest.fail("Password input must not proceed with echo enabled")
+        raise failure
+
+    monkeypatch.setattr("applenotes.cli.getpass.getpass", fail)
+    assert main(["init"]) == 2
+    assert "APPLENOTES_IMAP_PASSWORD" in capsys.readouterr().err
+
+
+@pytest.mark.usefixtures("no_password_prompt")
+def test_explicit_empty_password_does_not_prompt(monkeypatch, capsys):
+    monkeypatch.setenv("APPLENOTES_IMAP_SERVER", "test")
+    monkeypatch.setenv("APPLENOTES_IMAP_USERNAME", "user")
+    monkeypatch.setenv("APPLENOTES_IMAP_PASSWORD", "")
+    assert main(["init"]) == 2
+    assert "APPLENOTES_IMAP_PASSWORD" in capsys.readouterr().err
+
+
+@pytest.mark.usefixtures("no_password_prompt")
 def test_multiple_invalid_settings(monkeypatch, capsys):
     monkeypatch.setenv("APPLENOTES_INDENT_SPACES", "0")
     monkeypatch.setenv("APPLENOTES_IMAP_PORT", "65536")
@@ -101,6 +176,7 @@ def test_invalid_password_value_is_not_printed(monkeypatch, capsys):
     assert "DO-NOT-PRINT" not in error
 
 
+@pytest.mark.usefixtures("no_password_prompt")
 def test_network_commands(tmp_path, monkeypatch, capsys):
     server = MockServer()
     monkeypatch.setenv("APPLENOTES_IMAP_SERVER", "test")
@@ -160,6 +236,7 @@ def test_status_labels_and_failure(tmp_path, capsys):
     assert main(["status"]) == 1
 
 
+@pytest.mark.usefixtures("no_password_prompt")
 def test_cli_env_file_and_connection_failure(tmp_path, monkeypatch):
     from applenotes.transport import TransportError
 
