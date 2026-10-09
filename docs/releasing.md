@@ -96,10 +96,18 @@ Check the package page at `https://test.pypi.org/project/applenotes/<VERSION>/` 
 - The package is listed
 - Attestations are present (visible under "Provenance")
 
-To test installation (uses `--index-strategy unsafe-best-match` so dependencies resolve from PyPI while pulling applenotes from TestPyPI):
+To test installation, install the CLI in an isolated environment with Python 3.14.
+Add TestPyPI as an index and explicitly keep PyPI as the default so dependencies
+such as `pydantic-settings` can be resolved. Using TestPyPI as the default index
+alone excludes PyPI and can fail on a clean machine.
 
 ```bash
-uv pip install --extra-index-url https://test.pypi.org/simple/ --index-strategy unsafe-best-match applenotes==<VERSION>
+uv tool install --python 3.14 \
+  --index https://test.pypi.org/simple/ \
+  --default-index https://pypi.org/simple/ \
+  --index-strategy unsafe-best-match \
+  "applenotes==<VERSION>"
+applenotes --help
 ```
 
 ### 6. Iterate if needed
@@ -149,10 +157,13 @@ Check the package page at `https://pypi.org/project/applenotes/<VERSION>/` and c
 - The package is listed
 - Attestations are present (visible under "Provenance")
 
-To test installation:
+To test installation from PyPI:
 
 ```bash
-uv pip install applenotes==<VERSION>
+uv tool install --python 3.14 \
+  --default-index https://pypi.org/simple/ \
+  "applenotes==<VERSION>"
+applenotes --help
 ```
 
 ## Workflows

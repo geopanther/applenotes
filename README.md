@@ -4,8 +4,11 @@ Synchronize one IMAP Notes mailbox with editable UTF-8 plain-text files. Python
 3.14 and Git (for the default merge command) are required. macOS and Linux are
 supported.
 
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then install
+applenotes:
+
 ```bash
-uv tool install .
+uv tool install applenotes
 applenotes --help
 ```
 
