@@ -12,3 +12,5 @@ dist/
 .applenotes/
 *.egg-info/
 .DS_Store
+*.txt
+setenv.sh
