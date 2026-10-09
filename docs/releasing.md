@@ -100,12 +100,15 @@ To test installation, install the CLI in an isolated environment with Python 3.1
 Add TestPyPI as an index and explicitly keep PyPI as the default so dependencies
 such as `pydantic-settings` can be resolved. Using TestPyPI as the default index
 alone excludes PyPI and can fail on a clean machine.
+Use `--refresh-package applenotes` to fetch fresh index data so uv can discover
+the newly published version.
 
 ```bash
 uv tool install --python 3.14 \
   --index https://test.pypi.org/simple/ \
   --default-index https://pypi.org/simple/ \
   --index-strategy unsafe-best-match \
+  --refresh-package applenotes \
   "applenotes==<VERSION>"
 applenotes --help
 ```
@@ -162,6 +165,7 @@ To test installation from PyPI:
 ```bash
 uv tool install --python 3.14 \
   --default-index https://pypi.org/simple/ \
+  --refresh-package applenotes \
   "applenotes==<VERSION>"
 applenotes --help
 ```
