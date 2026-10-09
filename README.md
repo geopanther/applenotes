@@ -121,7 +121,7 @@ are never issued. IMAP cannot provide a cross-client transaction: ambiguous race
 stop and retain observations in pending state. Back up state before manually
 repairing pending operations; do not delete state to bypass a recovery error.
 
-See [contributing](CONTRIBUTING.md), [release procedures](docs/releases.md), and
+See [contributing](CONTRIBUTING.md), [release procedures](docs/releasing.md), and
 [validation and Apple interoperability](docs/validation.md). Background scheduling,
 OAuth, attachment synchronization and CloudKit are outside this version's scope.
 
