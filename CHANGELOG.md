@@ -5,6 +5,8 @@ changes under Unreleased until a final release is prepared.
 
 ## Unreleased
 
+## [0.1.0] - 2026-10-10
+
 ### Added
 
 - Hidden interactive password prompt for network commands when
