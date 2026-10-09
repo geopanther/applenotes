@@ -17,15 +17,10 @@ jobs:
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3.14"
-      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
-        with:
-          version: "0.11.7"
-      - name: Validate release and build
-        run: |
-          uv sync --locked --group dev
-          test "v$(uv run --locked python scripts/release.py check)" = "$GITHUB_REF_NAME"
-          uv run --locked tox -e py314
-          uv build
+      - name: Install build deps
+        run: pip install build
+      - name: Build a binary wheel and a source tarball
+        run: python -m build
       - name: Upload distribution artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -33,8 +28,29 @@ jobs:
           path: dist/
           if-no-files-found: error
 
-  publish-pypi:
+  release:
     needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Get version without v prefix
+        id: get-version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+      - name: Get release notes
+        id: get-release-notes
+        uses: release-flow/keep-a-changelog-action@74931dec7ecdbfc8e38ac9ae7e8dd84c08db2f32 # v3
+        with:
+          command: query
+          version: ${{ steps.get-version.outputs.version }}
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
+        with:
+          body: ${{ steps.get-release-notes.outputs.release-notes }}
+
+  publish-pypi:
+    needs: release
     runs-on: ubuntu-latest
     environment: pypi-publish-prod
     permissions:
