@@ -5,24 +5,11 @@ Synchronize one IMAP Notes mailbox with editable UTF-8 plain-text files. Python
 supported.
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then install
-the current release candidate from TestPyPI. PyPI remains available for dependencies.
-The CLI runs in its own environment; no source checkout is needed.
+applenotes:
 
 ```bash
-uv tool install --python 3.14 \
-  --index https://test.pypi.org/simple/ \
-  --default-index https://pypi.org/simple/ \
-  --index-strategy unsafe-best-match \
-  applenotes==0.1.0rc3
+uv tool install applenotes
 applenotes --help
-```
-
-When a final release is available on PyPI, install it with:
-
-```bash
-uv tool install --python 3.14 \
-  --default-index https://pypi.org/simple/ \
-  applenotes
 ```
 
 Set connection settings in your environment or an optional `.env` in the current
