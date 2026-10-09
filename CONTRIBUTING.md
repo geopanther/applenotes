@@ -52,4 +52,4 @@ legacy dependency pin. Run the pre-push checks before requesting review.
 
 Use concise imperative commit subjects and keep related changes together. Add
 user-facing changes under `## Unreleased` in `CHANGELOG.md`. Do not publish or
-change versions as part of a routine feature PR. See [releases](docs/releases.md).
+change versions as part of a routine feature PR. See [releasing](docs/releasing.md).
