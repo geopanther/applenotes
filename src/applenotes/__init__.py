@@ -1,3 +1,3 @@
 """Plain-text IMAP notes synchronization."""
 
-__version__ = "0.1.0-rc1"
+__version__ = "0.1.0-rc2"
