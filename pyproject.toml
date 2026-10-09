@@ -1,6 +1,6 @@
 [project]
 name = "applenotes"
-version = "0.1.0-rc2"
+version = "0.1.0-rc3"
 description = "Synchronize IMAP notes with editable plain-text files"
 readme = "README.md"
 requires-python = ">=3.14"
