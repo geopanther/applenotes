@@ -5,6 +5,8 @@ changes under Unreleased until a final release is prepared.
 
 ## Unreleased
 
+## [0.1.0-final1] - 2026-10-09
+
 ### Fixed
 
 - Configuration errors name missing or invalid settings and explain validation
