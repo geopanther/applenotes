@@ -3,8 +3,8 @@ import json
 import pytest
 from pydantic import ValidationError
 
-from applenotes.models import Conflict, NoteRecord, State, digest
-from applenotes.settings import DEFAULT_MERGE_COMMAND, Settings
+from appletextnotes.models import Conflict, NoteRecord, State, digest
+from appletextnotes.settings import DEFAULT_MERGE_COMMAND, Settings
 
 
 def test_offline_defaults_and_network_validation():
@@ -26,12 +26,12 @@ def test_offline_defaults_and_network_validation():
 
 def test_precedence(tmp_path, monkeypatch):
     dotenv = tmp_path / ".env"
-    dotenv.write_text("APPLENOTES_IMAP_SERVER=dotenv\nAPPLENOTES_IMAP_PASSWORD=secret\n")
-    monkeypatch.setenv("APPLENOTES_IMAP_SERVER", "environment")
+    dotenv.write_text("APPLETEXTNOTES_IMAP_SERVER=dotenv\nAPPLETEXTNOTES_IMAP_PASSWORD=secret\n")
+    monkeypatch.setenv("APPLETEXTNOTES_IMAP_SERVER", "environment")
     assert Settings(_env_file=dotenv).imap_server == "environment"
     assert Settings(imap_server="cli", _env_file=dotenv).imap_server == "cli"
     monkeypatch.setenv(
-        "APPLENOTES_MERGE_COMMAND", json.dumps(["tool", "{local}", "{base}", "{remote}"])
+        "APPLETEXTNOTES_MERGE_COMMAND", json.dumps(["tool", "{local}", "{base}", "{remote}"])
     )
     assert Settings(_env_file=None).merge_command[0] == "tool"
 
@@ -88,7 +88,7 @@ def test_invalid_command_null_and_literal_braces():
 
 
 def test_invalid_state_hash_ids_paths_and_pending():
-    from applenotes.models import PendingOperation
+    from appletextnotes.models import PendingOperation
 
     with pytest.raises(ValidationError):
         NoteRecord(local_id="x", path="x.txt", base_text="one", base_hash=digest("two"))
@@ -123,7 +123,7 @@ def test_invalid_state_hash_ids_paths_and_pending():
     ],
 )
 def test_pending_contract(overrides):
-    from applenotes.models import PendingOperation
+    from appletextnotes.models import PendingOperation
 
     values = {"operation_id": "op", "note_id": "note", "uidvalidity": 1}
     with pytest.raises(ValidationError):

@@ -1,5 +1,5 @@
 [project]
-name = "applenotes"
+name = "appletextnotes"
 version = "0.1.0"
 description = "Synchronize IMAP notes with editable plain-text files"
 readme = "README.md"
@@ -8,7 +8,7 @@ license = "MIT"
 dependencies = ["pydantic>=2.12,<3", "pydantic-settings>=2.12,<3", "beautifulsoup4>=4.14,<5"]
 
 [project.scripts]
-applenotes = "applenotes.cli:main"
+appletextnotes = "appletextnotes.cli:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -19,7 +19,7 @@ dev = ["pytest>=8", "pytest-cov>=7", "ruff>=0.15.11", "ty", "pre-commit", "tox>=
 
 [tool.hatch.build.targets.wheel]
 core-metadata-version = "2.4"
-packages = ["src/applenotes"]
+packages = ["src/appletextnotes"]
 
 [tool.hatch.build.targets.sdist]
 core-metadata-version = "2.4"
@@ -28,7 +28,7 @@ include = ["src", "tests", "scripts", "docs", "README.md", "CONTRIBUTING.md", "C
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src", "."]
-addopts = "--cov=applenotes --cov-branch --cov-report=term-missing --cov-fail-under=90"
+addopts = "--cov=appletextnotes --cov-branch --cov-report=term-missing --cov-fail-under=90"
 
 [tool.ruff]
 line-length = 100

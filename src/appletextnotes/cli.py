@@ -9,16 +9,16 @@ from pathlib import Path
 from pydantic import SecretStr, ValidationError
 from pydantic_settings import SettingsError
 
-from applenotes import __version__
-from applenotes.engine import SyncEngine, SyncError
-from applenotes.settings import Settings
-from applenotes.storage import Storage, StorageError
-from applenotes.transport import IMAPTransport, TransportError
+from appletextnotes import __version__
+from appletextnotes.engine import SyncEngine, SyncError
+from appletextnotes.settings import Settings
+from appletextnotes.storage import Storage, StorageError
+from appletextnotes.transport import IMAPTransport, TransportError
 
 
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(
-        prog="applenotes", description="Synchronize IMAP notes as plain text."
+        prog="appletextnotes", description="Synchronize IMAP notes as plain text."
     )
     root.add_argument("--version", action="version", version=__version__)
     root.add_argument("--workspace", type=Path, default=Path.cwd())
@@ -50,7 +50,7 @@ def parser() -> argparse.ArgumentParser:
 
 def discover(root: Path) -> Path:
     for path in [root, *root.parents]:
-        if (path / ".applenotes" / "state.json").exists():
+        if (path / ".appletextnotes" / "state.json").exists():
             return path
     return root
 
@@ -62,7 +62,7 @@ def prompt_password() -> SecretStr:
             return SecretStr(getpass.getpass("IMAP password: "))
     except (EOFError, KeyboardInterrupt, getpass.GetPassWarning) as error:
         raise ValueError(
-            "Unable to read IMAP password interactively; set APPLENOTES_IMAP_PASSWORD."
+            "Unable to read IMAP password interactively; set APPLETEXTNOTES_IMAP_PASSWORD."
         ) from error
 
 
@@ -115,7 +115,7 @@ def main(argv: list[str] | None = None) -> int:
                 include_input=False, include_context=False, include_url=False
             ):
                 field, *path = detail["loc"]
-                setting = f"APPLENOTES_{str(field).upper()}"
+                setting = f"APPLETEXTNOTES_{str(field).upper()}"
                 setting += "".join(f"[{part}]" for part in path)
                 print(f"  {setting}: {detail['msg']}", file=sys.stderr)
             return 2

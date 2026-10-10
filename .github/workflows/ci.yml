@@ -46,7 +46,7 @@ jobs:
         with:
           version: "0.11.7"
       - name: Type check
-        run: uv run --locked --group dev ty check src/applenotes
+        run: uv run --locked --group dev ty check src/appletextnotes
   test:
     runs-on: ubuntu-latest
     steps:

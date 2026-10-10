@@ -9,7 +9,7 @@ __pycache__/
 .coverage*
 htmlcov/
 dist/
-.applenotes/
+.appletextnotes/
 *.egg-info/
 .DS_Store
 *.txt

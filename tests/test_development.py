@@ -22,7 +22,7 @@ def script():
 def test_versions_and_workflow_guards():
     project = tomllib.loads((ROOT / "pyproject.toml").read_text())
     config = tomllib.loads((ROOT / ".bumpversion.toml").read_text())
-    from applenotes import __version__
+    from appletextnotes import __version__
 
     assert Version(project["project"]["version"]) == Version(__version__)
     assert config["tool"]["bumpversion"]["current_version"] == __version__
@@ -67,7 +67,7 @@ def test_actual_candidate_and_final_bumps(tmp_path):
     for relative in [
         "pyproject.toml",
         ".bumpversion.toml",
-        "src/applenotes/__init__.py",
+        "src/appletextnotes/__init__.py",
         "CHANGELOG.md",
     ]:
         target = tmp_path / relative
@@ -113,6 +113,9 @@ def test_actual_candidate_and_final_bumps(tmp_path):
         config = tomllib.loads((tmp_path / ".bumpversion.toml").read_text())
         assert project["project"]["version"] == version
         assert config["tool"]["bumpversion"]["current_version"] == version
-        assert f'__version__ = "{version}"' in (tmp_path / "src/applenotes/__init__.py").read_text()
+        assert (
+            f'__version__ = "{version}"'
+            in (tmp_path / "src/appletextnotes/__init__.py").read_text()
+        )
         commit()
     assert (tmp_path / "CHANGELOG.md").read_text().count("## [0.3.0]") == 1

@@ -1,9 +1,9 @@
 import pytest
 
-from applenotes.engine import SyncEngine, SyncError
-from applenotes.settings import Settings
-from applenotes.storage import Storage
-from applenotes.text import decode_note, encode_note
+from appletextnotes.engine import SyncEngine, SyncError
+from appletextnotes.settings import Settings
+from appletextnotes.storage import Storage
+from appletextnotes.text import decode_note, encode_note
 from tests.mock_server import MockServer
 
 
@@ -653,7 +653,7 @@ def test_no_uidplus_replacement_keeps_only_target_flagged(setup):
 def test_fixture_markers_block_resolving():
     from pathlib import Path
 
-    from applenotes.engine import has_markers
+    from appletextnotes.engine import has_markers
 
     assert has_markers((Path(__file__).parent / "fixtures/conflict.txt").read_text())
 

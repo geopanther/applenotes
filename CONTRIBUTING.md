@@ -7,7 +7,7 @@ brew install osv-scanner
 uv sync --locked --group dev
 uv run pre-commit install
 uv run pre-commit run --all-files
-uv run ty check src/applenotes
+uv run ty check src/appletextnotes
 uv run tox -e py314
 uv build
 ```
@@ -24,7 +24,7 @@ the hook configuration; recreating environments or running `pre-commit clean` is
 unnecessary.
 
 Write behavior tests before production changes. Tests must never load a real
-`.env`, credentials or server. The autouse fixture clears `APPLENOTES_` variables
+`.env`, credentials or server. The autouse fixture clears `APPLETEXTNOTES_` variables
 and changes into a temporary directory. Use explicit synthetic settings, the
 independent stateful server in `tests/mock_server.py`, and the fragmented loopback
 IMAP fixture for transport tests. Loopback tests require permission to bind a

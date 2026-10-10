@@ -9,7 +9,7 @@ from uuid import uuid4
 
 from bs4 import BeautifulSoup, Comment, NavigableString, Tag
 
-from applenotes.models import RemoteNote
+from appletextnotes.models import RemoteNote
 
 
 def canonical(text: str, width: int = 4) -> str:
@@ -164,10 +164,10 @@ def encode_note(
     message = EmailMessage(policy=policy.SMTP)
     message["Subject"] = title(text)
     message["Date"] = formatdate(localtime=False)
-    message["Message-ID"] = message_id or make_msgid(domain="applenotes.local")
+    message["Message-ID"] = message_id or make_msgid(domain="appletextnotes.local")
     message["X-Uniform-Type-Identifier"] = "com.apple.mail-note"
     message["X-Universally-Unique-Identifier"] = apple_uuid or str(uuid4()).upper()
-    message["X-Mailer"] = "applenotes"
+    message["X-Mailer"] = "appletextnotes"
     message["MIME-Version"] = "1.0"
     message["Content-Type"] = 'text/plain; charset="utf-8"'
     message.set_payload(canonical(text, width).encode("utf-8"))
