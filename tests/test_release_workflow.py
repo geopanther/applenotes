@@ -101,7 +101,7 @@ def test_merge_bump_workflow(release_commands, monkeypatch, tmp_path, version, b
         "git",
         "add",
         "pyproject.toml",
-        "src/applenotes/__init__.py",
+        "src/appletextnotes/__init__.py",
         ".bumpversion.toml",
         "CHANGELOG.md",
         "uv.lock",

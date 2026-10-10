@@ -1,13 +1,13 @@
 # Releasing
 
-This document describes how to release new versions of applenotes.
+This document describes how to release new versions of appletextnotes.
 
 ## Overview
 
 The project uses a two-stage release pipeline:
 
-1. **Release candidate** → published to [TestPyPI](https://test.pypi.org/project/applenotes/) for validation (with approval gate)
-2. **Final release** → published to [PyPI](https://pypi.org/project/applenotes/) (with approval gate)
+1. **Release candidate** → published to [TestPyPI](https://test.pypi.org/project/appletextnotes/) for validation (with approval gate)
+2. **Final release** → published to [PyPI](https://pypi.org/project/appletextnotes/) (with approval gate)
 
 All publishing uses [PyPI Trusted Publishers (OIDC)](https://docs.pypi.org/trusted-publishers/) — no API tokens are involved. Packages include [digital attestations](https://docs.pypi.org/attestations/) for provenance verification.
 
@@ -23,7 +23,7 @@ All publishing uses [PyPI Trusted Publishers (OIDC)](https://docs.pypi.org/trust
 
 Versions follow [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH` with optional `-rcN` suffix for release candidates.
 
-Version bumping is managed by [bump-my-version](https://github.com/callowayproject/bump-my-version) via `.bumpversion.toml`. It updates `pyproject.toml`, `src/applenotes/__init__.py`, and `CHANGELOG.md` automatically.
+Version bumping is managed by [bump-my-version](https://github.com/callowayproject/bump-my-version) via `.bumpversion.toml`. It updates `pyproject.toml`, `src/appletextnotes/__init__.py`, and `CHANGELOG.md` automatically.
 
 Two helper scripts handle the git workflow after bumping:
 
@@ -91,7 +91,7 @@ Go to the Actions tab, find the running workflow, and approve the `publish-testp
 
 ### 5. Verify on TestPyPI
 
-Check the package page at `https://test.pypi.org/project/applenotes/<VERSION>/` and confirm:
+Check the package page at `https://test.pypi.org/project/appletextnotes/<VERSION>/` and confirm:
 
 - The package is listed
 - Attestations are present (visible under "Provenance")
@@ -100,7 +100,7 @@ To test installation, install the CLI in an isolated environment with Python 3.1
 Add TestPyPI as an index and explicitly keep PyPI as the default so dependencies
 such as `pydantic-settings` can be resolved. Using TestPyPI as the default index
 alone excludes PyPI and can fail on a clean machine.
-Use `--refresh-package applenotes` to fetch fresh index data so uv can discover
+Use `--refresh-package appletextnotes` to fetch fresh index data so uv can discover
 the newly published version.
 
 ```bash
@@ -108,9 +108,9 @@ uv tool install --python 3.14 \
   --index https://test.pypi.org/simple/ \
   --default-index https://pypi.org/simple/ \
   --index-strategy unsafe-best-match \
-  --refresh-package applenotes \
-  "applenotes==<VERSION>"
-applenotes --help
+  --refresh-package appletextnotes \
+  "appletextnotes==<VERSION>"
+appletextnotes --help
 ```
 
 ### 6. Iterate if needed
@@ -155,7 +155,7 @@ Go to the Actions tab, find the running workflow, and approve the `publish-pypi`
 
 ### 5. Verify on PyPI
 
-Check the package page at `https://pypi.org/project/applenotes/<VERSION>/` and confirm:
+Check the package page at `https://pypi.org/project/appletextnotes/<VERSION>/` and confirm:
 
 - The package is listed
 - Attestations are present (visible under "Provenance")
@@ -165,9 +165,9 @@ To test installation from PyPI:
 ```bash
 uv tool install --python 3.14 \
   --default-index https://pypi.org/simple/ \
-  --refresh-package applenotes \
-  "applenotes==<VERSION>"
-applenotes --help
+  --refresh-package appletextnotes \
+  "appletextnotes==<VERSION>"
+appletextnotes --help
 ```
 
 ## Workflows

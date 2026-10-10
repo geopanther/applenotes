@@ -3,10 +3,10 @@ import sys
 
 import pytest
 
-from applenotes.merge import MergeError, Merger
-from applenotes.models import State
-from applenotes.settings import DEFAULT_MERGE_COMMAND
-from applenotes.storage import Storage, StorageError, filename
+from appletextnotes.merge import MergeError, Merger
+from appletextnotes.models import State
+from appletextnotes.settings import DEFAULT_MERGE_COMMAND
+from appletextnotes.storage import Storage, StorageError, filename
 
 
 def test_state_atomic_and_validation(tmp_path):
@@ -34,7 +34,7 @@ def test_lock_paths_and_cleanup(tmp_path):
             with store.lock():
                 pass
     assert not (store.meta / "lock").exists()
-    for path in ["../escape", "/absolute", ".applenotes/state.json"]:
+    for path in ["../escape", "/absolute", ".appletextnotes/state.json"]:
         with pytest.raises(StorageError):
             store.path(path)
     (tmp_path / "bad.txt").symlink_to("/etc/passwd")
@@ -57,7 +57,7 @@ def test_atomic_failure_preserves_old(tmp_path, monkeypatch):
     def fail(*args):
         raise OSError("disk")
 
-    monkeypatch.setattr("applenotes.storage.os.replace", fail)
+    monkeypatch.setattr("appletextnotes.storage.os.replace", fail)
     with pytest.raises(OSError):
         store.save(State(uidvalidity=2))
     assert store.state_path.read_bytes() == original
@@ -125,12 +125,12 @@ def test_missing_merge_executable(tmp_path):
 
 
 def test_metadata_symlinks_rejected(tmp_path):
-    (tmp_path / ".applenotes").symlink_to(tmp_path / "other")
+    (tmp_path / ".appletextnotes").symlink_to(tmp_path / "other")
     with pytest.raises(StorageError):
         Storage(tmp_path)
-    (tmp_path / ".applenotes").unlink()
-    (tmp_path / ".applenotes").mkdir()
-    (tmp_path / ".applenotes/state.json").symlink_to("/etc/passwd")
+    (tmp_path / ".appletextnotes").unlink()
+    (tmp_path / ".appletextnotes").mkdir()
+    (tmp_path / ".appletextnotes/state.json").symlink_to("/etc/passwd")
     with pytest.raises(StorageError):
         Storage(tmp_path)
 

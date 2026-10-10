@@ -5,8 +5,8 @@ from contextlib import nullcontext
 from datetime import UTC, datetime
 from uuid import uuid4
 
-from applenotes.merge import MergeError, Merger
-from applenotes.models import (
+from appletextnotes.merge import MergeError, Merger
+from appletextnotes.models import (
     Conflict,
     NoteRecord,
     PendingOperation,
@@ -16,11 +16,11 @@ from applenotes.models import (
     StructuredError,
     SyncResult,
 )
-from applenotes.planner import decide
-from applenotes.settings import Settings
-from applenotes.storage import Storage, StorageError, filename
-from applenotes.text import canonical, decode_note, encode_note
-from applenotes.transport import Transport, TransportError
+from appletextnotes.planner import decide
+from appletextnotes.settings import Settings
+from appletextnotes.storage import Storage, StorageError, filename
+from appletextnotes.text import canonical, decode_note, encode_note
+from appletextnotes.transport import Transport, TransportError
 
 
 class SyncError(Exception):
@@ -339,7 +339,7 @@ class SyncEngine:
             remote_before=remote,
             old_uid=remote.uid if remote else None,
             uidvalidity=state.uidvalidity,
-            message_id=f"<{operation_id}@applenotes.local>" if action == "upload" else None,
+            message_id=f"<{operation_id}@appletextnotes.local>" if action == "upload" else None,
             apple_uuid=(remote.apple_uuid if remote else note.apple_uuid) or str(uuid4()).upper(),
             conflict=conflict,
         )

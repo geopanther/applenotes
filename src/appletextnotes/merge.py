@@ -5,8 +5,8 @@ import subprocess  # nosec B404
 import tempfile
 from pathlib import Path
 
-from applenotes.models import MergeResult
-from applenotes.settings import validate_command
+from appletextnotes.models import MergeResult
+from appletextnotes.settings import validate_command
 
 
 class MergeError(Exception):

@@ -6,7 +6,7 @@ import re
 import ssl
 from typing import Protocol
 
-from applenotes.settings import Settings
+from appletextnotes.settings import Settings
 
 IMAP_ERROR = imaplib.IMAP4.error
 

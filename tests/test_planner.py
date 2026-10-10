@@ -1,6 +1,6 @@
 import pytest
 
-from applenotes.planner import decide
+from appletextnotes.planner import decide
 
 
 @pytest.mark.parametrize(

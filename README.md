@@ -1,34 +1,34 @@
-# applenotes
+# appletextnotes
 
 Synchronize one IMAP Notes mailbox with editable UTF-8 plain-text files. Python
 3.14 and Git (for the default merge command) are required. macOS and Linux are
 supported.
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then install
-applenotes:
+appletextnotes:
 
 ```bash
-uv tool install applenotes
-applenotes --help
+uv tool install appletextnotes
+appletextnotes --help
 ```
 
 Set connection settings in your environment or an optional `.env` in the current
 working directory. Explicit command-line settings take precedence over environment
 variables, which take precedence over `.env`. Passwords have no CLI argument.
-If `APPLENOTES_IMAP_PASSWORD` is unset, network commands prompt for it with input
+If `APPLETEXTNOTES_IMAP_PASSWORD` is unset, network commands prompt for it with input
 hidden. The entered password is used only for that invocation and is never saved.
 Set the variable for unattended commands. An explicitly empty password is invalid.
 
 ```bash
-export APPLENOTES_IMAP_SERVER=imap.example.org
-export APPLENOTES_IMAP_USERNAME=you@example.org
-# Optionally set APPLENOTES_IMAP_PASSWORD to skip the password prompt.
+export APPLETEXTNOTES_IMAP_SERVER=imap.example.org
+export APPLETEXTNOTES_IMAP_USERNAME=you@example.org
+# Optionally set APPLETEXTNOTES_IMAP_PASSWORD to skip the password prompt.
 mkdir notes
 cd notes
-applenotes init
-applenotes sync --dry-run
-applenotes sync
-applenotes status --json
+appletextnotes init
+appletextnotes sync --dry-run
+appletextnotes sync
+appletextnotes status --json
 ```
 
 `init --create-folder` explicitly permits creating a missing mailbox. Subsequent
@@ -64,20 +64,20 @@ does not replace the remote message.
 
 Complete groups of four leading spaces become actual tabs; remainder, inline and
 trailing spaces remain. LF line endings and final-newline differences are preserved.
-Set `APPLENOTES_INDENT_SPACES` or `--indent-spaces` to change the width before
+Set `APPLETEXTNOTES_INDENT_SPACES` or `--indent-spaces` to change the width before
 initializing a workspace; changing it later can appear as content edits.
 
-| Setting (`APPLENOTES_` prefix) | Default                                              |
-| ------------------------------ | ---------------------------------------------------- |
-| `IMAP_SERVER`, `IMAP_USERNAME` | Required for network commands                        |
-| `IMAP_PASSWORD`                | Prompted if unset                                    |
-| `IMAP_FOLDER`                  | `Notes`                                              |
-| `IMAP_SECURITY`                | `tls`; alternatively `starttls` (required, verified) |
-| `IMAP_PORT`                    | 993 for TLS; 143 for STARTTLS                        |
-| `TIMEOUT_SECONDS`              | 30                                                   |
-| `INDENT_SPACES`                | 4                                                    |
-| `MERGE_TIMEOUT_SECONDS`        | 30                                                   |
-| `MERGE_COMMAND`                | JSON argv shown below                                |
+| Setting (`APPLETEXTNOTES_` prefix) | Default                                              |
+| ---------------------------------- | ---------------------------------------------------- |
+| `IMAP_SERVER`, `IMAP_USERNAME`     | Required for network commands                        |
+| `IMAP_PASSWORD`                    | Prompted if unset                                    |
+| `IMAP_FOLDER`                      | `Notes`                                              |
+| `IMAP_SECURITY`                    | `tls`; alternatively `starttls` (required, verified) |
+| `IMAP_PORT`                        | 993 for TLS; 143 for STARTTLS                        |
+| `TIMEOUT_SECONDS`                  | 30                                                   |
+| `INDENT_SPACES`                    | 4                                                    |
+| `MERGE_TIMEOUT_SECONDS`            | 30                                                   |
+| `MERGE_COMMAND`                    | JSON argv shown below                                |
 
 The default merge command works outside a Git repository:
 
@@ -85,10 +85,10 @@ The default merge command works outside a Git repository:
 ["git", "merge-file", "--stdout", "--diff3", "{local}", "{base}", "{remote}"]
 ```
 
-Override it using `APPLENOTES_MERGE_COMMAND` or `--merge-command` with a JSON
+Override it using `APPLETEXTNOTES_MERGE_COMMAND` or `--merge-command` with a JSON
 argument array. All three placeholders are required. No shell is involved; shell
 metacharacters are literal. Literal braces in other arguments must be doubled.
-Inputs are UTF-8 files in a temporary `.applenotes` directory. The tool must output
+Inputs are UTF-8 files in a temporary `.appletextnotes` directory. The tool must output
 the complete merged text on stdout: exit 0 means clean, exit 1 means conflicted.
 The built-in Git adapter also accepts Git's positive conflict counts up to 127.
 Timeouts, invalid UTF-8, missing executables and other exit codes stop the operation
@@ -108,7 +108,7 @@ Clients that replace both UUID and content can require explicit linking; ambiguo
 remote additions are held for review rather than causing local deletions. Use a
 read-only IMAP client to inspect UIDs when linking.
 
-Durable metadata lives solely in `.applenotes/state.json`, including merge bases,
+Durable metadata lives solely in `.appletextnotes/state.json`, including merge bases,
 identity evidence, conflicts, completed tombstones, operation intents and recovery
 checkpoints. Atomic replacements and a transient directory lock protect writes.
 Symlinks and workspace escapes are rejected. Credentials are not stored in state.

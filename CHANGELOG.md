@@ -10,7 +10,7 @@ changes under Unreleased until a final release is prepared.
 ### Added
 
 - Hidden interactive password prompt for network commands when
-  `APPLENOTES_IMAP_PASSWORD` is unset; the password is never saved.
+  `APPLETEXTNOTES_IMAP_PASSWORD` is unset; the password is never saved.
 - CI distribution checks build wheels and source archives and validate them with
   the publisher's Twine and packaging versions before release tagging.
 - Isolated tests for version bumping, RC changelog cleanup, release scripts, and
@@ -29,7 +29,7 @@ changes under Unreleased until a final release is prepared.
 - Release documentation describes the two-stage publishing process, approval
   gates, version bumps, and package verification.
 - README installation instructions use the published package with
-  `uv tool install applenotes` and link to uv installation instructions.
+  `uv tool install appletextnotes` and link to uv installation instructions.
 - Git ignores local `.txt` note files and `setenv.sh`.
 
 ### Fixed
@@ -40,8 +40,8 @@ changes under Unreleased until a final release is prepared.
   publishing validator.
 - TestPyPI verification keeps PyPI as the default index and uses
   `unsafe-best-match` so dependencies can resolve across both indexes.
-- TestPyPI and PyPI verification refresh the applenotes index cache with
-  `--refresh-package applenotes` to discover newly published versions.
+- TestPyPI and PyPI verification refresh the appletextnotes index cache with
+  `--refresh-package appletextnotes` to discover newly published versions.
 - Removed the erroneous `0.1.0-final1` heading introduced during an RC bump so
   pending changes remain under Unreleased until the first final release.
 

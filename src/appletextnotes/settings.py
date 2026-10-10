@@ -7,7 +7,7 @@ from typing import Annotated, Literal
 from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
-from applenotes.models import Identity
+from appletextnotes.models import Identity
 
 DEFAULT_MERGE_COMMAND = [
     "git",
@@ -38,7 +38,7 @@ def validate_command(command: list[str]) -> list[str]:
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="APPLENOTES_", env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_prefix="APPLETEXTNOTES_", env_file=".env", extra="ignore")
 
     imap_server: str | None = None
     imap_username: str | None = None
@@ -82,7 +82,7 @@ class Settings(BaseSettings):
 
     def require_network(self) -> None:
         missing = [
-            f"APPLENOTES_{field.upper()}"
+            f"APPLETEXTNOTES_{field.upper()}"
             for field in ("imap_server", "imap_username", "imap_password")
             if not getattr(self, field)
         ]

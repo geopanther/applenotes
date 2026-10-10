@@ -16,7 +16,7 @@ def safe_relative(path: str) -> str:
         not path
         or PurePath(path).is_absolute()
         or len(PurePath(path).parts) != 1
-        or path in {".", "..", ".applenotes"}
+        or path in {".", "..", ".appletextnotes"}
         or "/" in path
         or "\\" in path
         or "\x00" in path

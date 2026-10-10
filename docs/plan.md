@@ -1,4 +1,4 @@
-# Implementation Plan: `applenotes`
+# Implementation Plan: `appletextnotes`
 
 ## 1. Goal and behavior
 
@@ -15,13 +15,13 @@ Required behavior:
 - Support a configurable merge tool, defaulting to Git’s three-way file merge.
 - Write unresolved conflicts into two local copies; leave the remote note unchanged.
 - Propagate deletions when the counterpart is unchanged; preserve edit-versus-delete conflicts.
-- Store all durable synchronization metadata in `.applenotes/state.json`.
+- Store all durable synchronization metadata in `.appletextnotes/state.json`.
 
 Existing environment files remain untouched. Tests must isolate themselves from real credentials and `.env` files.
 
 ## 2. Package and development workflow
 
-Create `src/applenotes/`, `tests/`, synthetic MIME fixtures, contributor documentation, and release documentation.
+Create `src/appletextnotes/`, `tests/`, synthetic MIME fixtures, contributor documentation, and release documentation.
 
 Use Hatchling, Python `>=3.14`, a committed `uv.lock`, and a Python 3.14 development environment.
 
@@ -59,7 +59,7 @@ Define an injectable transport interface implemented by the real `imaplib` adapt
 
 ### Configuration
 
-Use `BaseSettings` with the `APPLENOTES_` prefix.
+Use `BaseSettings` with the `APPLETEXTNOTES_` prefix.
 
 | Setting                 | Default or requirement                       |
 | ----------------------- | -------------------------------------------- |
@@ -86,7 +86,7 @@ Use Git’s file-level merge as the default:
 
 `git merge-file` provides Git merge behavior for three files without requiring a Git repository.
 
-Expose configuration through `APPLENOTES_MERGE_COMMAND`, parsed as a JSON argument array, and a CLI `--merge-command` override using the same representation.
+Expose configuration through `APPLETEXTNOTES_MERGE_COMMAND`, parsed as a JSON argument array, and a CLI `--merge-command` override using the same representation.
 
 The external-tool contract is:
 
@@ -96,7 +96,7 @@ The external-tool contract is:
 - Other exit codes, timeout, missing executable, or invalid UTF-8 mean an operational failure.
 - The built-in Git adapter additionally recognizes Git’s documented positive conflict counts.
 - Commands run without a shell. Reject missing or unknown placeholders before invocation.
-- Temporary inputs live under `.applenotes` and are removed after execution.
+- Temporary inputs live under `.appletextnotes` and are removed after execution.
 - Tool failure preserves all original versions and does not upload anything.
 
 External tools must support this contract directly or through a user-provided wrapper. Version one supports noninteractive tools only.
@@ -115,7 +115,7 @@ Human-readable state contains:
 - Conflicts, tombstones, pending operations, and recovery checkpoints.
 - Last successful sync and structured errors.
 
-Use atomic replacement and a transient workspace lock. Temporary files and locks reside under `.applenotes`; no separate durable database is introduced.
+Use atomic replacement and a transient workspace lock. Temporary files and locks reside under `.appletextnotes`; no separate durable database is introduced.
 
 Reject workspace escapes, external symlinks, and accidental reuse with another account.
 
@@ -235,7 +235,7 @@ Support multiple clients, injected failures, lost responses, and scheduled concu
 uv sync --locked --group dev
 uv run pre-commit install
 uv run pre-commit run --all-files
-uv run ty check src/applenotes
+uv run ty check src/appletextnotes
 uv run tox -e py314
 uv build
 ```

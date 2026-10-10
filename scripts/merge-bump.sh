@@ -57,7 +57,7 @@ git checkout -b "${BRANCH}"
 UV_LOCKED=0 uv sync --all-groups
 
 # Commit only bumped files + lockfile
-git add pyproject.toml src/applenotes/__init__.py .bumpversion.toml CHANGELOG.md uv.lock
+git add pyproject.toml src/appletextnotes/__init__.py .bumpversion.toml CHANGELOG.md uv.lock
 git commit --no-edit -m "Bump version: ${VERSION}"
 
 # Push and create PR

@@ -17,8 +17,8 @@ uv build
 ```
 
 For a manual wheel smoke test, install the wheel in a fresh Python 3.14 environment,
-run `applenotes --version` and `applenotes --help`, then run an offline
-`applenotes status --json` against a synthetic workspace. Inspect the wheel and
+run `appletextnotes --version` and `appletextnotes --help`, then run an offline
+`appletextnotes status --json` against a synthetic workspace. Inspect the wheel and
 sdist: neither should contain `.env`, workspace state, credentials or `.venv`.
 
 ## Recorded implementation checks

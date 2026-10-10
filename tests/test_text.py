@@ -4,7 +4,7 @@ from email.parser import BytesParser
 
 import pytest
 
-from applenotes.text import canonical, decode_note, encode_note, html_text, title
+from appletextnotes.text import canonical, decode_note, encode_note, html_text, title
 
 
 @pytest.mark.parametrize(
@@ -88,7 +88,7 @@ def test_malformed_and_attachment_only():
     "text", ["Title\n\tbody < &\n\n", "", "\nbody", "ü😀\n\t tab  ", "no newline"]
 )
 def test_upload_roundtrip(text):
-    raw = encode_note(text, apple_uuid="fixed", message_id="<operation@applenotes.local>")
+    raw = encode_note(text, apple_uuid="fixed", message_id="<operation@appletextnotes.local>")
     m = BytesParser(policy=policy.default).parsebytes(raw)
     assert m.get_content_type() == "text/plain"
     assert not m.is_multipart()
@@ -96,7 +96,7 @@ def test_upload_roundtrip(text):
     assert m["X-Uniform-Type-Identifier"] == "com.apple.mail-note"
     assert m["X-Universally-Unique-Identifier"] == "fixed"
     assert decode_note(1, raw).text == canonical(text)
-    assert decode_note(1, raw).message_id == "<operation@applenotes.local>"
+    assert decode_note(1, raw).message_id == "<operation@appletextnotes.local>"
 
 
 def test_generated_headers_are_fresh():

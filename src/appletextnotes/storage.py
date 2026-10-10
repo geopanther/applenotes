@@ -10,8 +10,8 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
-from applenotes.models import State, safe_relative
-from applenotes.text import title
+from appletextnotes.models import State, safe_relative
+from appletextnotes.text import title
 
 
 class StorageError(Exception):
@@ -28,7 +28,7 @@ def filename(text: str, local_id: str) -> str:
 class Storage:
     def __init__(self, root: Path):
         self.root = root.resolve()
-        self.meta = self.root / ".applenotes"
+        self.meta = self.root / ".appletextnotes"
         self.state_path = self.meta / "state.json"
         self._check_meta()
 

@@ -35,7 +35,7 @@ repos:
     hooks:
       - id: bandit
         pass_filenames: false
-        args: [-r, src/applenotes, -s, B101]
+        args: [-r, src/appletextnotes, -s, B101]
   - repo: local
     hooks:
       - id: osv-scanner
@@ -51,7 +51,7 @@ repos:
         stages: [commit-msg]
       - id: ty
         name: ty
-        entry: uv run --locked --group dev ty check src/applenotes
+        entry: uv run --locked --group dev ty check src/appletextnotes
         language: system
         types: [python]
         pass_filenames: false

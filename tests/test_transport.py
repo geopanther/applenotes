@@ -3,9 +3,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from applenotes.settings import Settings
-from applenotes.text import encode_note
-from applenotes.transport import IMAPTransport, TransportError, mailbox_name
+from appletextnotes.settings import Settings
+from appletextnotes.text import encode_note
+from appletextnotes.transport import IMAPTransport, TransportError, mailbox_name
 from tests.loopback import loopback
 from tests.mock_server import MockServer
 
@@ -48,8 +48,8 @@ def test_secure_connect(monkeypatch, security):
     wire.starttls.return_value = ("OK", [b"ok"])
     tls = MagicMock(return_value=wire)
     plain = MagicMock(return_value=wire)
-    monkeypatch.setattr("applenotes.transport.imaplib.IMAP4_SSL", tls)
-    monkeypatch.setattr("applenotes.transport.imaplib.IMAP4", plain)
+    monkeypatch.setattr("appletextnotes.transport.imaplib.IMAP4_SSL", tls)
+    monkeypatch.setattr("appletextnotes.transport.imaplib.IMAP4", plain)
     settings = Settings(
         imap_server="host",
         imap_username="user",
@@ -76,7 +76,7 @@ def test_connection_errors_are_redacted(monkeypatch, fault):
         factory.side_effect = OSError("secret")
     else:
         getattr(wire, fault).side_effect = imaplib.IMAP4.error("secret")
-    monkeypatch.setattr("applenotes.transport.imaplib.IMAP4", factory)
+    monkeypatch.setattr("appletextnotes.transport.imaplib.IMAP4", factory)
     settings = Settings(
         imap_server="host",
         imap_username="user",
